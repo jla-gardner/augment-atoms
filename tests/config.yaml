@@ -1,0 +1,15 @@
+data:
+  input: tests/start.xyz
+  output: output.xyz
+
+config:
+  n_per_structure: 10
+  T: 300
+  beta: 0.5
+  sigma_range: [0.01, 0.1]
+  seed: 42
+  cell_sigma: null
+  units: eV
+
+model:
+  calculator: +lennard_jones()
