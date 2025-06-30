@@ -1,5 +1,13 @@
 # `augment-atoms`
 
+<div align="center">
+
+[![Test](https://github.com/jla-gardner/augment-atoms/actions/workflows/test.yaml/badge.svg)](https://github.com/jla-gardner/augment-atoms/actions/workflows/test.yaml)
+[![PyPI](https://img.shields.io/pypi/v/augment-atoms)](https://pypi.org/project/augment-atoms/)
+[![GitHub last commit](https://img.shields.io/github/last-commit/jla-gardner/augment-atoms)](https://github.com/jla-gardner/augment-atoms/commits/main)
+[![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
+
+</div>
 
 `augment-atoms` is a tool for augmenting datasets of atomic configurations via a model-driven, GPU-accelerated, rattle-relax-repeat procedure.
 
@@ -20,6 +28,10 @@ For precise details of each of these steps, see the [Details](#details) section 
 ```bash
 pip install augment-atoms
 ```
+
+This will install the `augment-atoms` command line tool (see `pyproject.toml` for the dependencies, requires Python 3.9+). Using [`uv`](https://docs.astral.sh/uv/) is recommended, and will install `augment-atoms` with the correct dependencies in under 20 seconds starting from scratch.
+
+There are no specific hardware requirements for `augment-atoms`. If a GPU is available, and the PES model supports it, the GPU will be used to accelerate structure generation. `augment-atoms` has been tested on both Linux and macOS.
 
 ## Usage
 
@@ -137,3 +149,43 @@ $$R^\prime \leftarrow R + \frac{\sigma_B}{x} \cdot \frac{F}{||F||}$$
 where $F/||F||$ are the normalised unit vectors corresponding to the direction of each atomic force.
 We perform up to $M$ relaxations steps, but stop early with probability $\min(0.25, e^{-\Delta E / kT})$ providing the maximum force magnitude is less than `config.max_force` and where $\Delta E$ is the energy difference between the relaxed child and its starting parent structure.
 We reject all final structures that have any pair of atoms closer than `config.min_separation` Å.
+
+## Demo
+
+> This demo uses structures and a model taken from this repo's sister repository, found [here](https://github.com/dft-dutoit/synthetic-distillation).
+
+We include a stand-alone demo usage in the `demo` directory. This takes 3 water structures as input and uses a PaiNN model to generate and label 27 new structures, for a total of 30 structures.
+
+The `demo` directory has the following files:
+- `input.xyz` contains 3 starting water structures
+- `config.yaml` contains the configuration for the demo
+- `model.pt` is a PaiNN model trained on water structures from ...
+- `output.xyz` is the augmented dataset output.
+
+To run this demo yourself:
+
+```bash
+# clone the repository
+git clone https://github.com/jla-gardner/augment-atoms.git
+cd augment-atoms/demo
+# remove the output file if it exists
+rm -rf output.xyz
+# run the demo
+augment-atoms config.yaml
+```
+
+This entire script took under 10 seconds on my M1 MacBook Pro.
+
+## Citation
+
+If you use `augment-atoms` in your research, please cite the following pre-print:
+
+```bibtex
+@misc{Gardner-25-06,
+  title = {Distillation of Atomistic Foundation Models across Architectures and Chemical Domains},
+  author = {Gardner, John L. A. and du Toit, Daniel F. Thomas and Mahmoud, Chiheb Ben and Beaulieu, Zo{\'e} Faure and Juraskova, Veronika and Pa{\c s}ca, Laura-Bianca and Rosset, Louise A. M. and Duarte, Fernanda and Martelli, Fausto and Pickard, Chris J. and Deringer, Volker L.},
+  year = {2025},
+  number = {arXiv:2506.10956},
+  doi = {10.48550/arXiv.2506.10956},
+}
+```

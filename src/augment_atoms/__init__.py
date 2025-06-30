@@ -121,7 +121,6 @@ def generate_structures(
             (i,) = vesin.ase_neighbor_list(
                 "i", atoms, cutoff=config.min_separation
             )
-            print(atoms.info["energy"] / len(atoms), len(i))
             return len(i) == 0
 
         for i in range(1, config.max_relax_steps + 2):
@@ -330,7 +329,7 @@ def main():
 
     for i, s in enumerate(starting_structures):
         print(
-            f"Augmenting structure {i} of {len(starting_structures)}",
+            f"Augmenting structure {i + 1} of {len(starting_structures)}",
             flush=True,
         )
         new_structures = generate_structures(
